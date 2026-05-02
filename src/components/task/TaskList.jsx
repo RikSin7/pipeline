@@ -8,20 +8,20 @@ export default function TaskList() {
   const groupedTasks = groupTasks(state.tasks);
 
   if (groupedTasks.length === 0) {
-    return <div className="p-4 text-gray-500">No tasks yet...</div>;
+    return <div className="p-4 text-muted-foreground text-center italic opacity-70">No tasks executed yet...</div>;
   }
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-6">
       {groupedTasks.map((group, idx) => (
-        <div key={idx} className="flex gap-3">
+        <div key={idx} className="flex gap-4">
           {group.map((task) => (
             <div key={task.id} className="flex-1">
               <TaskCard task={task} />
             </div>
           ))}
           {group.length > 1 && (
-            <div className="text-xs text-gray-400 mb-1">
+            <div className="text-[10px] text-muted-foreground font-semibold uppercase tracking-widest mt-2 flex items-center justify-center -rotate-90 origin-left translate-x-4 opacity-50">
               Parallel tasks
             </div>
           )}

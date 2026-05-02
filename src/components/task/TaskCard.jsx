@@ -5,60 +5,66 @@ import StatusBadge from "../common/StatusBadge";
 export default function TaskCard({ task }) {
 
   const borderColor =
-    task.status === "complete" ? "border-green-200" :
-      task.status === "failed" ? "border-red-200" :
-        task.status === "cancelled" ? "border-gray-200" :
-          "border-blue-200";
+    task.status === "complete" ? "border-success/30 shadow-[0_4px_20px_rgba(52,211,153,0.05)]" :
+      task.status === "failed" ? "border-destructive/30 shadow-[0_4px_20px_rgba(248,113,113,0.05)]" :
+        task.status === "cancelled" ? "border-muted-foreground/20" :
+          "border-primary/40 shadow-[0_0_15px_rgba(129,140,248,0.15)]";
 
   return (
-    <div className={`border rounded-lg p-4 transition-all duration-300 bg-white ${borderColor}`}>
+    <div className={`border rounded-xl p-5 transition-all duration-300 bg-card/60 hover:bg-card/80 backdrop-blur-sm ${borderColor}`}>
 
       {/* --- HEADER --- */}
-      <div className="flex justify-between items-start mb-3">
+      <div className="flex justify-between items-start mb-4">
         <div>
-          <h4 className="font-semibold text-gray-800">{task.label}</h4>
-          <div className="flex gap-2 items-center mt-1">
-            <span className="text-xs font-mono bg-gray-100 text-gray-600 px-2 py-0.5 rounded">
-              🤖 {task.agent}
+          <h4 className="font-semibold text-card-foreground text-base tracking-tight">{task.label}</h4>
+          <div className="flex gap-2 items-center mt-2.5">
+            <span className="text-xs font-mono bg-muted/80 text-muted-foreground px-2.5 py-1 rounded-md border border-border/50 shadow-sm flex items-center gap-1.5">
+              <span className="opacity-80">🤖</span> {task.agent}
             </span>
             {task.retries > 0 && (
-              <span className="text-xs text-orange-600 font-medium">
-                Retried {task.retries}x
+              <span className="text-xs text-nowrap text-warning-foreground font-medium bg-warning/20 px-2 py-1 rounded-md border border-warning/30 flex items-center gap-1">
+                <span>🔄</span> Retried {task.retries}x
               </span>
             )}
           </div>
         </div>
 
-        
-        {task.dependsOn?.length > 0 && (
-          <div className="text-xs text-gray-500 mb-2">
-            Depends on: {task.dependsOn.join(", ")}
-          </div>
-        )}
+        <div className="flex flex-col items-end gap-2">
+          {/* Dynamic Status Badge */}
+          <StatusBadge status={task.status} />
 
-        {/* Dynamic Status Badge */}
-        <StatusBadge status={task.status} />
-
+          {task.dependsOn?.length > 0 && (
+            <div className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
+              Depends on: {task.dependsOn.join(", ")}
+            </div>
+          )}
+        </div>
       </div>
 
       {/* --- ERROR & CANCEL STATES --- */}
       {task.status === "failed" && task.error && (
-        <div className="mb-3 text-sm text-red-600 bg-red-50 p-2 rounded border border-red-100">
-          <strong>Error:</strong> {task.error}
+        <div className="mb-4 text-sm text-destructive-foreground bg-destructive/20 p-3 rounded-lg border border-destructive/30 shadow-sm flex gap-2 items-start">
+          <span className="text-destructive text-lg">⚠️</span>
+          <div>
+            <strong className="font-semibold block mb-0.5 text-destructive">Error</strong> 
+            <span className="text-muted-foreground">{task.error}</span>
+          </div>
         </div>
       )}
 
       {task.status === "cancelled" && task.reason && (
-        <div className="mb-3 text-sm text-gray-600 bg-gray-50 p-2 rounded border border-gray-200 border-l-4 border-l-gray-400">
-          <strong>Intentional Halt:</strong> {task.message || task.reason}
+        <div className="mb-4 text-sm text-muted-foreground bg-muted/70 p-3 rounded-lg border border-border/80 border-l-4 border-l-muted-foreground shadow-sm">
+          <strong className="font-semibold text-foreground">Intentional Halt:</strong> {task.message || task.reason}
         </div>
       )}
 
       {/* TOOL CALLS */}
       {task.toolCalls?.length > 0 && (
-        <div className="mt-3">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Actions</p>
-          <div className="space-y-1">
+        <div className="mt-5">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-2">
+            <span className="w-4 h-[1px] bg-border"></span> Actions
+          </p>
+          <div className="space-y-1.5">
             {task.toolCalls.map((call, idx) => <ToolCall key={idx} call={call} />)}
           </div>
         </div>
@@ -66,22 +72,27 @@ export default function TaskCard({ task }) {
 
       {/* PARTIAL OUTPUTS */}
       {task.outputs?.length > 0 && (
-        <div className="mt-4 pt-3 border-t border-gray-100">
-          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-1">Findings</p>
-          <div className="space-y-2">
+        <div className="mt-5 pt-4 border-t border-border/40">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mb-2 flex items-center gap-2">
+            <span className="w-4 h-[1px] bg-border"></span> Findings
+          </p>
+          <div className="space-y-2.5">
             {task.outputs.map((output, idx) => <OutputBlock key={idx} output={output} />)}
           </div>
         </div>
       )}
 
       {task.history?.length > 0 && (
-        <div className="mt-2 text-xs text-gray-400">
-          History: {task.history.map((h, i) => (
-            <span key={i}>
-              {h.status}
-              {i < task.history.length - 1 && " → "}
-            </span>
-          ))}
+        <div className="mt-5 text-[10px] font-mono text-muted-foreground/50 flex items-center gap-2">
+          <span className="uppercase tracking-wider font-semibold opacity-70">History:</span>
+          <div className="flex items-center gap-1.5">
+            {task.history.map((h, i) => (
+              <span key={i} className="flex items-center gap-1.5">
+                <span className={h.status === 'failed' ? 'text-destructive/80' : h.status === 'complete' ? 'text-success/80' : ''}>{h.status}</span>
+                {i < task.history.length - 1 && <span className="text-border/60">→</span>}
+              </span>
+            ))}
+          </div>
         </div>
       )}
 

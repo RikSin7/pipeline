@@ -2,30 +2,30 @@ import Loader from "./Loader";
 
 const STATUS_CONFIG = {
   running: {
-    bg: "bg-blue-50",
-    border: "border-blue-200",
-    text: "text-blue-700",
-    label: "Running...",
-    icon: <Loader size="sm" className="text-blue-600" />,
+    bg: "bg-primary/10",
+    border: "border-primary/30",
+    text: "text-primary",
+    label: "Running",
+    icon: <Loader size="sm" className="text-primary" />,
   },
   complete: {
-    bg: "bg-green-50",
-    border: "border-green-200",
-    text: "text-green-700",
+    bg: "bg-success/10",
+    border: "border-success/30",
+    text: "text-success",
     label: "Complete",
     icon: "✓",
   },
   failed: {
-    bg: "bg-red-50",
-    border: "border-red-200",
-    text: "text-red-700",
+    bg: "bg-destructive/10",
+    border: "border-destructive/30",
+    text: "text-destructive",
     label: "Failed",
     icon: "✖",
   },
   cancelled: {
-    bg: "bg-gray-100",
-    border: "border-gray-200",
-    text: "text-gray-600",
+    bg: "bg-muted",
+    border: "border-border",
+    text: "text-muted-foreground",
     label: "Skipped",
     icon: "⊘",
   },
@@ -35,8 +35,10 @@ export default function StatusBadge({ status }) {
   const config = STATUS_CONFIG[status] || STATUS_CONFIG.running;
 
   return (
-    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium border ${config.bg} ${config.border} ${config.text}`}>
-      {config.icon}
+    <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-[10px] uppercase tracking-widest font-bold border ${config.bg} ${config.border} ${config.text} shadow-sm transition-colors`}>
+      <span className="flex items-center justify-center w-3 h-3">
+        {config.icon}
+      </span>
       {config.label}
     </div>
   );

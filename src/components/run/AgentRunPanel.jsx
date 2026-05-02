@@ -11,13 +11,11 @@ import AgentThoughts from "./AgentThoughts";
 export default function AgentRunPanel() {
   const { state, dispatch } = useRun()
 
-  const [activeFixture, setActiveFixture] = useState("success"); // toggle success and error mocks  
+  const [activeFixture, setActiveFixture] = useState("success");
 
   const isIdle = state.run.status === "idle";
 
   useEffect(() => {
-
-    //reset run when component mounts before starting the mock run
     dispatch({ type: "reset_run" })
 
     const events = activeFixture === "success" ? successEvents : errorEvents;
@@ -30,36 +28,40 @@ export default function AgentRunPanel() {
 
   if (isIdle) {
     return (
-      <div className="p-6 text-center text-gray-500">
-        <p className="text-lg font-medium">No active run</p>
-        <p className="text-sm mt-2">
-          Submit a query to start analysis
+      <div className="p-10 mt-10 text-center text-muted-foreground bg-card/40 border border-border/50 max-w-xl mx-auto rounded-xl glass shadow-lg">
+        <p className="text-xl font-semibold text-foreground tracking-tight">No active run</p>
+        <p className="text-sm mt-3 opacity-80">
+          Submit a query to start analysis and view the agent's progress
         </p>
       </div>
     );
   }
 
   return (
-    <div className="p-4 max-w-7xl mx-auto">
-      <div className="mb-4 flex gap-2">
+    <div className="p-4 max-w-7xl mx-auto space-y-6">
+      <div className="flex gap-3 mb-6 p-1 bg-card/60 w-fit rounded-lg border border-border/50 backdrop-blur-sm">
         <button
           onClick={() => setActiveFixture("success")}
-          className={`px-4 py-2 rounded text-sm font-medium ${activeFixture === 'success' ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          className={`px-5 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${activeFixture === 'success' ? 'bg-primary text-primary-foreground shadow-[0_0_15px_rgba(129,140,248,0.25)]' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}`}
         >
           Run Success Path
         </button>
         <button
           onClick={() => setActiveFixture("error")}
-          className={`px-4 py-2 rounded text-sm font-medium ${activeFixture === 'error' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700'}`}
+          className={`px-5 py-2 rounded-md text-sm font-semibold transition-all duration-300 ${activeFixture === 'error' ? 'bg-destructive text-destructive-foreground shadow-[0_0_15px_rgba(248,113,113,0.25)]' : 'text-muted-foreground hover:text-foreground hover:bg-white/5'}`}
         >
           Run Error Path
         </button>
       </div>
 
-      <RunHeader />
-      <FinalOutput />
-      <AgentThoughts />
-      <TaskList />
+      <div className="glass rounded-xl overflow-hidden shadow-2xl">
+        <RunHeader />
+        <div className="p-6">
+          <FinalOutput />
+          <AgentThoughts />
+          <TaskList />
+        </div>
+      </div>
     </div>
   );
 }
