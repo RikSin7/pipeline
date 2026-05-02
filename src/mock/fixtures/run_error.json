@@ -1,0 +1,66 @@
+[
+  {
+    "type": "run_started",
+    "run_id": "r_002",
+    "query": "Analyse Tesla margins",
+    "timestamp": 1700000000000
+  },
+  {
+    "type": "task_spawned",
+    "task_id": "t_001",
+    "label": "Fetch Tesla filings",
+    "agent": "filing_fetcher",
+    "parallel_group": null,
+    "depends_on": [],
+    "timestamp": 1700000001000
+  },
+  {
+    "type": "tool_call",
+    "task_id": "t_001",
+    "tool": "sec_edgar_search",
+    "input_summary": "TSLA filings",
+    "timestamp": 1700000002000
+  },
+  {
+    "type": "partial_output",
+    "task_id": "t_001",
+    "content": "Revenue growing rapidly...",
+    "is_final": false,
+    "quality_score": null,
+    "timestamp": 1700000003000
+  },
+
+  {
+    "type": "task_spawned",
+    "task_id": "t_002",
+    "label": "Fetch competitors",
+    "agent": "peer_fetcher",
+    "parallel_group": "pg_1",
+    "depends_on": [],
+    "timestamp": 1700000004000
+  },
+  {
+    "type": "task_spawned",
+    "task_id": "t_003",
+    "label": "Fetch industry benchmarks",
+    "agent": "peer_fetcher",
+    "parallel_group": "pg_1",
+    "depends_on": [],
+    "timestamp": 1700000004000
+  },
+
+  {
+    "type": "task_update",
+    "task_id": "t_003",
+    "status": "failed",
+    "error": "API timeout",
+    "timestamp": 1700000005000
+  },
+
+  {
+    "type": "run_error",
+    "run_id": "r_002",
+    "message": "Coordinator failed unexpectedly. Partial results available.",
+    "timestamp": 1700000006000
+  }
+]
