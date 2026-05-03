@@ -48,3 +48,6 @@ If I had more time to expand this project, I would address the following gaps:
 - Vite
 - Tailwind CSS v4
 - Immer (for clean, immutable state updates in the reducer)
+
+## AI Collaboration
+As encouraged by the assessment guidelines, I utilized **ChatGPT** and **Gemini** as pair-programming assistants during this project. They were instrumental in scaffolding boilerplate code, refining the Tailwind CSS dark mode aesthetics, and iterating on the state management logic. All architectural, UX, and product decisions documented here were explicitly driven by me.
