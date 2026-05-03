@@ -13,17 +13,15 @@ export class EventEmitter {
 
     if (!this.events || this.events.length === 0) return;
 
-    const baseTime = this.events[0].timestamp; //the first event in the array
+    const baseTime = this.events[0].timestamp; 
 
     this.events.forEach((event) => {
       const rawDelay = event.timestamp - baseTime;
-
-      const normalizedDelay = rawDelay / this.speed; //speed is used to control the speed of the events
-      const delay = normalizedDelay > 1200 ? 1200 : normalizedDelay; //delay is used to control the delay of the events
+      const delay = rawDelay / this.speed; 
 
       const id = setTimeout(() => {
         if (this.isPlaying) {
-          this.onEmit(event); //onEmit = dispatch; Each event is sent to reducer
+          this.onEmit(event); 
         }
       }, delay);
 

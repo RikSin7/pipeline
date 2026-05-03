@@ -6,9 +6,15 @@
     "timestamp": 1700000000000
   },
   {
+    "type": "agent_thought",
+    "task_id": "coordinator",
+    "thought": "Initiating data fetch protocol for TSLA...",
+    "timestamp": 1700000000500
+  },
+  {
     "type": "task_spawned",
     "task_id": "t_001",
-    "label": "Fetch Tesla filings",
+    "label": "Fetch Tesla 10-Q filings",
     "agent": "filing_fetcher",
     "parallel_group": null,
     "depends_on": [],
@@ -18,49 +24,68 @@
     "type": "tool_call",
     "task_id": "t_001",
     "tool": "sec_edgar_search",
-    "input_summary": "TSLA filings",
+    "input_summary": "TSLA 10-Q",
     "timestamp": 1700000002000
   },
   {
     "type": "partial_output",
     "task_id": "t_001",
-    "content": "Revenue growing rapidly...",
-    "is_final": false,
-    "quality_score": null,
+    "content": "Gross margin declined by 1.2% in Q3...",
+    "is_final": true,
+    "quality_score": 0.88,
     "timestamp": 1700000003000
   },
-
   {
     "type": "task_spawned",
     "task_id": "t_002",
-    "label": "Fetch competitors",
+    "label": "Fetch BYD competitors",
     "agent": "peer_fetcher",
     "parallel_group": "pg_1",
     "depends_on": [],
     "timestamp": 1700000004000
+  },
+  {
+    "type": "tool_call",
+    "task_id": "t_002",
+    "tool": "international_market_fetch",
+    "input_summary": "BYD gross margins",
+    "timestamp": 1700000004500
   },
   {
     "type": "task_spawned",
     "task_id": "t_003",
-    "label": "Fetch industry benchmarks",
+    "label": "Fetch Rivian filings",
     "agent": "peer_fetcher",
     "parallel_group": "pg_1",
     "depends_on": [],
-    "timestamp": 1700000004000
+    "timestamp": 1700000005000
   },
-
   {
     "type": "task_update",
     "task_id": "t_003",
     "status": "failed",
-    "error": "API timeout",
-    "timestamp": 1700000005000
+    "error": "SEC EDGAR unrecoverable timeout on RVN.",
+    "timestamp": 1700000006000
   },
-
+  {
+    "type": "agent_thought",
+    "task_id": "coordinator",
+    "thought": "Critical failure in peer fetching. Aborting run.",
+    "timestamp": 1700000006500
+  },
   {
     "type": "run_error",
     "run_id": "r_002",
-    "message": "Coordinator failed unexpectedly. Partial results available.",
-    "timestamp": 1700000006000
+    "message": "Coordinator failed unexpectedly due to API unresponsiveness. Partial results available.",
+    "timestamp": 1700000007000
+  },
+  {
+    "type": "task_spawned",
+    "task_id": "t_999",
+    "label": "Fetch missing dependency",
+    "agent": "peer_fetcher",
+    "parallel_group": null,
+    "depends_on": [],
+    "timestamp": 1700000006500
   }
 ]

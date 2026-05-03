@@ -1,8 +1,19 @@
 import OutputBlock from "./OutputBlock";
 import ToolCall from "./ToolCall";
 import StatusBadge from "../common/StatusBadge";
+import { useRun } from "../../state/RunContext";
 
 export default function TaskCard({ task }) {
+
+  // Grab global state
+  const { state } = useRun();
+
+  // Calculate if blocked
+  const isBlocked = task.dependsOn?.length > 0 && task.dependsOn.some((parentId) => {
+    const parentTask = state.tasks[parentId];
+    // If parent doesn't exist yet, or isn't finished/cancelled, task is blocked
+    return !parentTask || (parentTask.status !== "complete" && parentTask.status !== "cancelled");
+  });
 
   const borderColor =
     task.status === "complete" ? "border-success/30 shadow-[0_4px_20px_rgba(52,211,153,0.05)]" :
@@ -17,7 +28,7 @@ export default function TaskCard({ task }) {
       <div className="flex justify-between items-start mb-4">
         <div>
           <h4 className="font-semibold text-card-foreground text-base tracking-tight">{task.label}</h4>
-          <div className="flex gap-2 items-center mt-2.5">
+          <div className="flex flex-col sm:flex-row gap-2 items-start mt-2.5">
             <span className="text-xs font-mono bg-muted/80 text-muted-foreground px-2.5 py-1 rounded-md border border-border/50 shadow-sm flex items-center gap-1.5">
               <span className="opacity-80">🤖</span> {task.agent}
             </span>
@@ -34,8 +45,9 @@ export default function TaskCard({ task }) {
           <StatusBadge status={task.status} />
 
           {task.dependsOn?.length > 0 && (
-            <div className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-0.5 rounded border border-border/30">
-              Depends on: {task.dependsOn.join(", ")}
+            <div className={`text-[10px] px-2 py-0.5 rounded border transition-colors ${isBlocked ? 'bg-warning/10 text-warning-foreground border-warning/30 animate-pulse' : 'bg-muted/50 text-muted-foreground border-border/30'}`}>
+              {isBlocked ? '⏳ Waiting on: ' : '✓ Depended on: '}
+              {task.dependsOn.join(", ")}
             </div>
           )}
         </div>
@@ -46,7 +58,7 @@ export default function TaskCard({ task }) {
         <div className="mb-4 text-sm text-destructive-foreground bg-destructive/20 p-3 rounded-lg border border-destructive/30 shadow-sm flex gap-2 items-start">
           <span className="text-destructive text-lg">⚠️</span>
           <div>
-            <strong className="font-semibold block mb-0.5 text-destructive">Error</strong> 
+            <strong className="font-semibold block mb-0.5 text-destructive">Error</strong>
             <span className="text-muted-foreground">{task.error}</span>
           </div>
         </div>
@@ -89,7 +101,7 @@ export default function TaskCard({ task }) {
             {task.history.map((h, i) => (
               <span key={i} className="flex items-center gap-1.5">
                 <span className={h.status === 'failed' ? 'text-destructive/80' : h.status === 'complete' ? 'text-success/80' : ''}>{h.status}</span>
-                {i < task.history.length - 1 && <span className="text-border/60">→</span>}
+                {i < task.history.length - 1 && <span>→</span>}
               </span>
             ))}
           </div>

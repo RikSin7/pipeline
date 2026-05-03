@@ -30,7 +30,7 @@ export const runReducer = produce((draft, event) => {
         label: event.label,
         agent: event.agent,
         status: "running",
-        history:[],
+        history: [{ status: "running", timestamp: event.timestamp }],
         toolCalls: [],
         outputs: [],
         parallelGroup: event.parallel_group,
@@ -78,6 +78,7 @@ export const runReducer = produce((draft, event) => {
 
       if (event.is_final) {
         task.status = "complete";
+        task.history.push({ status: "complete", timestamp: event.timestamp });
       }
 
       break;

@@ -9,36 +9,30 @@ import FinalOutput from "./FinalOutput";
 import AgentThoughts from "./AgentThoughts";
 
 export default function AgentRunPanel() {
-  const { state, dispatch } = useRun()
-
-  const [activeFixture, setActiveFixture] = useState("success");
+  const { state, dispatch } = useRun();
+  
+  // Initialize to null so it stays idle on mount
+  const [activeFixture, setActiveFixture] = useState(null);
 
   const isIdle = state.run.status === "idle";
 
   useEffect(() => {
-    dispatch({ type: "reset_run" })
+    // Abort the effect if no fixture is selected yet
+    if (!activeFixture) return;
+
+    dispatch({ type: "reset_run" });
 
     const events = activeFixture === "success" ? successEvents : errorEvents;
-
-    const emitter = new EventEmitter(events, dispatch, 10);
+    const emitter = new EventEmitter(events, dispatch, 2);
+    
     emitter.play();
 
     return () => emitter.stop();
   }, [dispatch, activeFixture]);
 
-  if (isIdle) {
-    return (
-      <div className="p-10 mt-10 text-center text-muted-foreground bg-card/40 border border-border/50 max-w-xl mx-auto rounded-xl glass shadow-lg">
-        <p className="text-xl font-semibold text-foreground tracking-tight">No active run</p>
-        <p className="text-sm mt-3 opacity-80">
-          Submit a query to start analysis and view the agent's progress
-        </p>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 max-w-7xl mx-auto space-y-6">
+      
       <div className="flex gap-3 mb-6 p-1 bg-card/60 w-fit rounded-lg border border-border/50 backdrop-blur-sm">
         <button
           onClick={() => setActiveFixture("success")}
@@ -54,14 +48,24 @@ export default function AgentRunPanel() {
         </button>
       </div>
 
-      <div className="glass rounded-xl overflow-hidden shadow-2xl">
-        <RunHeader />
-        <div className="p-6">
-          <FinalOutput />
-          <AgentThoughts />
-          <TaskList />
+      {isIdle ? (
+        <div className="p-10 mt-10 text-center text-muted-foreground bg-card/40 border border-border/50 max-w-xl mx-auto rounded-xl glass shadow-lg">
+          <p className="text-xl font-semibold text-foreground tracking-tight">No active run</p>
+          <p className="text-sm mt-3 opacity-80">
+            Select a path above to start the analysis and view the agent's progress.
+          </p>
         </div>
-      </div>
+      ) : (
+        <div className="glass rounded-xl overflow-hidden shadow-2xl">
+          <RunHeader />
+          <div className="p-6">
+            <FinalOutput />
+            <AgentThoughts />
+            <TaskList />
+          </div>
+        </div>
+      )}
+      
     </div>
   );
 }

@@ -26,7 +26,7 @@ const STATUS_CONFIG = {
     bg: "bg-muted",
     border: "border-border",
     text: "text-muted-foreground",
-    label: "Skipped",
+    label: "Cancelled",
     icon: "⊘",
   },
 };
